@@ -107,7 +107,9 @@ if [ -f "$TAGS_FILE" ]; then
 fi
 
 if [ $INDEX_WHOLE_PROJECT -eq 1 ]; then
-    if [ -n "${FILE_LIST_CMD}" ]; then
+    if [ "${CTAGS_EXE}" == "fast-tags" ]; then
+        CTAGS_ARGS="${CTAGS_ARGS} -R "${PROJECT_ROOT}""
+    elif [ -n "${FILE_LIST_CMD}" ]; then
         if [ "${PROJECT_ROOT}" = "." ] || [ $FILE_LIST_CMD_IS_ABSOLUTE -eq 1 ]; then
             echo "Running file list command"
             echo "eval $FILE_LIST_CMD > \"${TAGS_FILE}.files\""
@@ -126,12 +128,12 @@ if [ $INDEX_WHOLE_PROJECT -eq 1 ]; then
     fi
 
     echo "Running ctags on whole project"
-    echo "$CTAGS_EXE -f \"$TAGS_FILE.temp\" $CTAGS_ARGS"
-    $CTAGS_EXE -f "$TAGS_FILE.temp" $CTAGS_ARGS
+    echo "$CTAGS_EXE -o \"$TAGS_FILE.temp\" $CTAGS_ARGS"
+    $CTAGS_EXE -o "$TAGS_FILE.temp" $CTAGS_ARGS
 else
     echo "Running ctags on \"$UPDATED_SOURCE\""
-    echo "$CTAGS_EXE -f \"$TAGS_FILE.temp\" $CTAGS_ARGS --append \"$UPDATED_SOURCE\""
-    $CTAGS_EXE -f "$TAGS_FILE.temp" $CTAGS_ARGS --append "$UPDATED_SOURCE"
+    echo "$CTAGS_EXE -o \"$TAGS_FILE.temp\" $CTAGS_ARGS --append \"$UPDATED_SOURCE\""
+    $CTAGS_EXE -o "$TAGS_FILE.temp" $CTAGS_ARGS --append "$UPDATED_SOURCE"
 fi
 
 if [ "$POST_PROCESS_CMD" != "" ]; then
